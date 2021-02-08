@@ -8,7 +8,6 @@ namespace LoadGpxTry2._0
     {
         public int Id { get; set; }
         public Coordinate Coordinate { get; set; }
-
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public double Elevation { get; set; }

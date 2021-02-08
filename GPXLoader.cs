@@ -85,6 +85,7 @@ namespace LoadGpxTry2._0
                         Elevation = double.Parse(trkSeg.Elevation, System.Globalization.CultureInfo.InvariantCulture),
                         Time = convertIsoToDateTime(trkSeg.Time)
                     };
+                    //System.Console.WriteLine(trackDto.Coordinate.Latitude);
                     //Coordinate A = new Coordinate(double.Parse(trkSeg.Latitude, System.Globalization.CultureInfo.InvariantCulture), double.Parse(trkSeg.Longitude, System.Globalization.CultureInfo.InvariantCulture));
 
                     tracksAsList.Add(trackDto);
@@ -126,7 +127,7 @@ namespace LoadGpxTry2._0
         /// <summary>
         /// It is a string to DateTime converter (yyyy-MM-dd'T'HH:mm:ss'Z')
         /// </summary>
-        /// <param name="iso"></param>
+        /// <param name="iso">Time in string (yyyy-MM-dd'T'HH:mm:ss'Z')</param>
         /// <returns>DateTime (yyyy-MM-dd'T'HH:mm:ss'Z') </returns>
         public DateTime convertIsoToDateTime(string iso)
         {
@@ -203,11 +204,19 @@ namespace LoadGpxTry2._0
         public double CountDistance(List<TrackDto> list) 
         {
             Console.WriteLine("Távolság számolás");
-            double _distance = 0.1;
-            for (int i = 1; i < list.Count; i++)
+            double _distance = 0.0;
+            /*
+            for (int i = 1; i < list.Count-1; i++)
             {
                 _distance = _distance + GeoCalculator.GetDistance(list[i - 1].Coordinate, list[i].Coordinate); //mindig 0át ad vissza
-                Console.WriteLine("Távolságok: " + GeoCalculator.GetDistance(list[i - 1].Coordinate, list[i].Coordinate));
+                //Console.WriteLine("Távolságok: " + GeoCalculator.GetDistance(list[i - 1].Coordinate, list[i].Coordinate));
+                Console.WriteLine("Kordinata: x: {0} y: {1} " + list[i].Coordinate.Latitude, list[i].Coordinate.Longitude);
+                //Console.WriteLine("");
+            }*/
+
+            foreach(var i in list)
+            {
+                Console.WriteLine("Kordinata: x: {0} y: {1} " + i.Coordinate.Latitude, i.Coordinate.Longitude);
             }
 
             return _distance;
