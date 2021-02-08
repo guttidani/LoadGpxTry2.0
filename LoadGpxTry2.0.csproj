@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>LoadGpxTry2._0</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GeoCoordinate" Version="2.0.1" />
+    <PackageReference Include="GeoCoordinate.NetStandard2" Version="1.0.1" />
+    <PackageReference Include="Geolocation" Version="1.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="activity_5106719776.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="trackek\Csoboth_attila_2020-08-15-13-30-56_Gesztes.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="trackek\csobot_ati_test.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
