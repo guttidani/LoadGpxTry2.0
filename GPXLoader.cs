@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
-using GeoCoordinate;
 using Geolocation;
-//using System.Device.Location;
 
 namespace LoadGpxTry2._0
 {
@@ -51,53 +48,40 @@ namespace LoadGpxTry2._0
                          {
                              Name = track.Element(gpx + "name") != null ?
                             track.Element(gpx + "name").Value : null,
-                             Segs = (
-                                from trackpoint in track.Descendants(gpx + "trkpt")
+                             Segs = (from trackpoint in track.Descendants(gpx + "trkpt")
                                 select new
                                 {
                                     Latitude = trackpoint.Attribute("lat").Value,
                                     Longitude = trackpoint.Attribute("lon").Value,
                                     Elevation = trackpoint.Element(gpx + "ele") != null ? trackpoint.Element(gpx + "ele").Value : null,
                                     Time = trackpoint.Element(gpx + "time") != null ? trackpoint.Element(gpx + "time").Value : null
-                                }
-                              )
+                                }   )
                          };
 
-            StringBuilder sb = new StringBuilder();
             List<TrackDto> tracksAsList = new List<TrackDto>();
-            Coordinate temp = new Coordinate();
 
             foreach (var trk in tracks)
             {
                 // Populate track data objects.
                 foreach (var trkSeg in trk.Segs)
                 {
-                    // Populate detailed track segments
-                    // in the object model here.
-
-                    //temp = (double.Parse(trkSeg.Latitude, System.Globalization.CultureInfo.InvariantCulture), double.Parse(trkSeg.Longitude, System.Globalization.CultureInfo.InvariantCulture));
                     TrackDto trackDto = new TrackDto
                     {
                         Latitude = double.Parse(trkSeg.Latitude, System.Globalization.CultureInfo.InvariantCulture),
                         Longitude = double.Parse(trkSeg.Longitude, System.Globalization.CultureInfo.InvariantCulture),
-                        // nem  tudom hogy itt jól adom e át az értékeket a kordinatanak
                         Coordinate = new Coordinate(double.Parse(trkSeg.Latitude, System.Globalization.CultureInfo.InvariantCulture), double.Parse(trkSeg.Longitude, System.Globalization.CultureInfo.InvariantCulture)),
                         Elevation = double.Parse(trkSeg.Elevation, System.Globalization.CultureInfo.InvariantCulture),
                         Time = convertIsoToDateTime(trkSeg.Time)
                     };
-                    //System.Console.WriteLine(trackDto.Coordinate.Latitude);
-                    //Coordinate A = new Coordinate(double.Parse(trkSeg.Latitude, System.Globalization.CultureInfo.InvariantCulture), double.Parse(trkSeg.Longitude, System.Globalization.CultureInfo.InvariantCulture));
-
                     tracksAsList.Add(trackDto);
-                    sb.Append(
-                      string.Format("Track:{0} - Latitude:{1} Longitude:{2} " + "Elevation:{3} Date:{4}\n",
-                        trk.Name, trkSeg.Latitude, trkSeg.Longitude, trkSeg.Elevation, trkSeg.Time));
                 }
             }
+
+            #region strutura rendezésre vár
             double _eleDif = FindMaxEle(tracksAsList) - FindMinEle(tracksAsList);
             string _runnerName = getNameFromFileName(Path.GetFileName(sFile));
             TimeSpan _duration = tracksAsList.Last().Time - tracksAsList.First().Time;
-
+            #endregion
 
             #region MakeNewRunner
             Runner runner = new Runner
@@ -110,17 +94,6 @@ namespace LoadGpxTry2._0
             };
             #endregion
 
-            Coordinate aPoint = new Coordinate(47.45475187872554, 19.182808074989666);
-            Coordinate bPoint = new Coordinate(47.450486370753225, 19.17913507644961);
-            
-            double _distance2 = GeoCalculator.GetDistance(aPoint, bPoint) / 0.62137; //miles to km
-
-            Console.WriteLine("distance between A and B point in m: {0}", _distance2);
-            Console.WriteLine("Max Ele: {0} - Min Ele: {1} - Dif ele: {2}", FindMaxEle(tracksAsList), FindMinEle(tracksAsList), _eleDif);
-            Console.WriteLine("Name: {0}, Duration: {1}", _runnerName, _duration);
-            Console.WriteLine("Megtett km: {0}", CountDistance(tracksAsList) / 1000);
-
-            //return sb.ToString();
             return tracksAsList; // Return as List
         }
 
@@ -154,6 +127,7 @@ namespace LoadGpxTry2._0
             }
             return runnerName;
         }
+
         #region CountElevationDif
         public double FindMaxEle(List<TrackDto> list)
         {
@@ -201,25 +175,21 @@ namespace LoadGpxTry2._0
             return base.ToString();
         }
 
-        public double CountDistance(List<TrackDto> list) 
+        /// <summary>
+        /// It count the full distance of the running from coordinate to coordinate
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public double CountDistance(List<TrackDto> list)
         {
-            Console.WriteLine("Távolság számolás");
-            double _distance = 0.0;
-            /*
-            for (int i = 1; i < list.Count-1; i++)
-            {
-                _distance = _distance + GeoCalculator.GetDistance(list[i - 1].Coordinate, list[i].Coordinate); //mindig 0át ad vissza
-                //Console.WriteLine("Távolságok: " + GeoCalculator.GetDistance(list[i - 1].Coordinate, list[i].Coordinate));
-                Console.WriteLine("Kordinata: x: {0} y: {1} " + list[i].Coordinate.Latitude, list[i].Coordinate.Longitude);
-                //Console.WriteLine("");
-            }*/
+            double distance = 0.0;
 
-            foreach(var i in list)
+            for (int i = 1; i < list.Count - 1; i++)
             {
-                Console.WriteLine("Kordinata: x: {0} y: {1} " + i.Coordinate.Latitude, i.Coordinate.Longitude);
+                distance += GeoCalculator.GetDistance(list[i - 1].Coordinate, list[i].Coordinate, distanceUnit: DistanceUnit.Meters); //mindig 0át ad vissza
             }
 
-            return _distance;
+            return distance;
         }
     }
 }

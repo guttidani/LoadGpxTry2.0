@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GeoCoordinate" Version="2.0.1" />
     <PackageReference Include="GeoCoordinate.NetStandard2" Version="1.0.1" />
     <PackageReference Include="Geolocation" Version="1.2.1" />
   </ItemGroup>
