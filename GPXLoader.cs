@@ -80,17 +80,13 @@ namespace LoadGpxTry2._0
             }
 
             #region MakeNewRunner
-
-            double _eleDif = rdp.FindMaxEle(tracksAsList) - rdp.FindMinEle(tracksAsList);
-            string _runnerName = rdp.getNameFromFileName(Path.GetFileName(sFile));
-            TimeSpan _duration = tracksAsList.Last().Time - tracksAsList.First().Time;
-
             Runner runner = new Runner
             {
-                Name = _runnerName,
+                Name = rdp.getNameFromFileName(Path.GetFileName(sFile)),
                 DateofRunning = tracksAsList.First().Time.Date,
-                RunTime = Convert.ToDateTime(_duration.ToString()),
-                Elevation = _eleDif,
+                RunTime = Convert.ToDateTime((tracksAsList.Last().Time - tracksAsList.First().Time).ToString()),
+                ElevationUp = rdp.ElevationUp(tracksAsList),
+                ElevationDown = rdp.ElevationDown(tracksAsList),
                 Distance = rdp.CountDistance(tracksAsList) / 1000
             };
             #endregion

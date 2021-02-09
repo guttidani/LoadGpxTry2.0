@@ -16,7 +16,7 @@ namespace LoadGpxTry2._0
         {
             double distance = 0.0;
 
-            for (int i = 1; i < list.Count - 1; i++)
+            for (int i = 1; i < list.Count; i++)
             {
                 distance += GeoCalculator.GetDistance(list[i - 1].Coordinate, list[i].Coordinate, distanceUnit: DistanceUnit.Meters); //mindig 0át ad vissza
             }
@@ -25,38 +25,34 @@ namespace LoadGpxTry2._0
         }
 
         #region CountElevationDif
-        public double FindMaxEle(List<TrackDto> list)
+        public double ElevationDown(List<TrackDto> list)
         {
-            if (list.Count == 0)
+            double eleDown =0;
+
+            for (int i = 1; i < list.Count; i++)
             {
-                throw new InvalidOperationException("Empty list");
-            }
-            double maxEle = double.MinValue;
-            foreach (TrackDto type in list)
-            {
-                if (type.Elevation > maxEle)
+                if (list[i].Elevation- list[i-1].Elevation<0)
                 {
-                    maxEle = type.Elevation;
+                    eleDown += list[i].Elevation - list[i - 1].Elevation;
                 }
             }
-            return maxEle;
+
+            return eleDown;
         }
 
-        public double FindMinEle(List<TrackDto> list)
+        public double ElevationUp(List<TrackDto> list)
         {
-            if (list.Count == 0)
+            double eleUp = 0;
+
+            for (int i = 1; i < list.Count; i++)
             {
-                throw new InvalidOperationException("Empty list");
-            }
-            double minEle = 500.0;
-            foreach (TrackDto type in list)
-            {
-                if (type.Elevation < minEle)
+                if (list[i].Elevation - list[i - 1].Elevation > 0)
                 {
-                    minEle = type.Elevation;
+                    eleUp += list[i].Elevation - list[i - 1].Elevation;
                 }
             }
-            return minEle;
+
+            return eleUp;
         }
         #endregion
 
