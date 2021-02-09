@@ -39,7 +39,6 @@ namespace LoadGpxTry2._0
         /// <param name="sFile">Fully qualified file name (local)</param>
         /// <returns>string containing line delimited waypoints from the
         /// file (for test)</returns>
-        //public string LoadGPXTracks(string sFile)
         public List<TrackDto> LoadGPXTracks(string sFile)
         {
             XDocument gpxDoc = GetGpxDoc(sFile);

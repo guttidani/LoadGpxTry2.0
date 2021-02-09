@@ -23,8 +23,12 @@ namespace LoadGpxTry2._0
 
             return distance;
         }
-
-        #region CountElevationDif
+        
+        /// <summary>
+        /// Add the elevation diffrence between A and B point if it is negative in a TrackDto list
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public double ElevationDown(List<TrackDto> list)
         {
             double eleDown =0;
@@ -37,9 +41,14 @@ namespace LoadGpxTry2._0
                 }
             }
 
-            return eleDown;
+            return eleDown*-1;
         }
 
+        /// <summary>
+        /// Add the elevation diffrence between A and B point if it is positive in a TrackDto list
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public double ElevationUp(List<TrackDto> list)
         {
             double eleUp = 0;
@@ -54,7 +63,6 @@ namespace LoadGpxTry2._0
 
             return eleUp;
         }
-        #endregion
 
         /// <summary>
         /// split the file name to get the runner name Example for a file name: Cserepes_Virág_2020-08-15_13-08-53.GPX
