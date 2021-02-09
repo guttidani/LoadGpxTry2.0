@@ -12,6 +12,7 @@ namespace LoadGpxTry2._0
         public double Elevation { get; set; }
         public DateTime RunTime { get; set; }
         public DateTime DateofRunning { get; set; }
+
         private static int _id = 1;
 
         public Runner()

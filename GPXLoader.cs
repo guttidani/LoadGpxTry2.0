@@ -6,6 +6,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Geolocation;
 
+
 namespace LoadGpxTry2._0
 {
     public class GPXLoader
@@ -43,6 +44,7 @@ namespace LoadGpxTry2._0
         {
             XDocument gpxDoc = GetGpxDoc(sFile);
             XNamespace gpx = GetGpxNameSpace();
+            RunnerDataProcessing rdp = new RunnerDataProcessing();
             var tracks = from track in gpxDoc.Descendants(gpx + "trk")
                          select new
                          {
@@ -77,20 +79,19 @@ namespace LoadGpxTry2._0
                 }
             }
 
-            #region strutura rendezésre vár
-            double _eleDif = FindMaxEle(tracksAsList) - FindMinEle(tracksAsList);
-            string _runnerName = getNameFromFileName(Path.GetFileName(sFile));
-            TimeSpan _duration = tracksAsList.Last().Time - tracksAsList.First().Time;
-            #endregion
-
             #region MakeNewRunner
+
+            double _eleDif = rdp.FindMaxEle(tracksAsList) - rdp.FindMinEle(tracksAsList);
+            string _runnerName = rdp.getNameFromFileName(Path.GetFileName(sFile));
+            TimeSpan _duration = tracksAsList.Last().Time - tracksAsList.First().Time;
+
             Runner runner = new Runner
             {
                 Name = _runnerName,
                 DateofRunning = tracksAsList.First().Time.Date,
                 RunTime = Convert.ToDateTime(_duration.ToString()),
                 Elevation = _eleDif,
-                Distance = CountDistance(tracksAsList) / 1000
+                Distance = rdp.CountDistance(tracksAsList) / 1000
             };
             #endregion
 
@@ -105,91 +106,6 @@ namespace LoadGpxTry2._0
         public DateTime convertIsoToDateTime(string iso)
         {
             return DateTime.ParseExact(iso, "yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture);
-        }
-
-        /// <summary>
-        /// split the file name to get the runner name Example for a file name: Daniel_Smith_2020-08-15_13-08-53.GPX
-        /// </summary>
-        /// <param name="_fileName"></param>
-        /// <returns>The name of the runner</returns>
-        public string getNameFromFileName(string _fileName)
-        {
-            string[] _split = _fileName.Split('_');
-            string runnerName = null;
-
-            for (int i = 0; i < 2; i++)
-            {
-                runnerName += _split[i];
-                if (i == 0)
-                {
-                    runnerName += " ";
-                }
-            }
-            return runnerName;
-        }
-
-        #region CountElevationDif
-        public double FindMaxEle(List<TrackDto> list)
-        {
-            if (list.Count == 0)
-            {
-                throw new InvalidOperationException("Empty list");
-            }
-            double maxEle = double.MinValue;
-            foreach (TrackDto type in list)
-            {
-                if (type.Elevation > maxEle)
-                {
-                    maxEle = type.Elevation;
-                }
-            }
-            return maxEle;
-        }
-
-        public double FindMinEle(List<TrackDto> list)
-        {
-            if (list.Count == 0)
-            {
-                throw new InvalidOperationException("Empty list");
-            }
-            double minEle = 500.0;
-            foreach (TrackDto type in list)
-            {
-                if (type.Elevation < minEle)
-                {
-                    minEle = type.Elevation;
-                }
-            }
-            return minEle;
-        }
-        #endregion
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        public string ToString(List<TrackDto> list)
-        {
-
-            return base.ToString();
-        }
-
-        /// <summary>
-        /// It count the full distance of the running from coordinate to coordinate
-        /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        public double CountDistance(List<TrackDto> list)
-        {
-            double distance = 0.0;
-
-            for (int i = 1; i < list.Count - 1; i++)
-            {
-                distance += GeoCalculator.GetDistance(list[i - 1].Coordinate, list[i].Coordinate, distanceUnit: DistanceUnit.Meters); //mindig 0át ad vissza
-            }
-
-            return distance;
         }
     }
 }
